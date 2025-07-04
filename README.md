@@ -13,6 +13,29 @@ This project provides a scalable backend for managing a fleet of simulated camer
 
 ---
 
+## What Does This Code Actually Do?
+
+This backend simulates a real-world IoT device management system for a fleet of smart cameras. Here’s how it works:
+
+- **Device Registration & Communication:**  
+  Each simulated camera device connects to the backend using a WebSocket connection. When a device connects, it is registered in Redis and tracked for patch updates.
+
+- **Patch Distribution:**  
+  The backend periodically checks for new patch files listed in Redis. For each connected device, it sends patch update notifications over the WebSocket. If a device fails to acknowledge a patch, or if the acknowledgment is delayed, the backend will automatically retry sending the patch.
+
+- **State Tracking:**  
+  The backend tracks the status of each patch for every device (e.g., pending, in-flight, acked) using Redis. This ensures that even if the backend is restarted or scaled, the patch and device state is preserved.
+
+- **Resilience & Scaling:**  
+  All device and patch state is stored in Redis, making the backend stateless and ready for horizontal scaling in Kubernetes. Multiple backend instances can run simultaneously, all sharing the same device and patch state.
+
+- **Device Simulator:**  
+  The included device simulator script (`device.py`) acts as a mock camera device. It connects to the backend, receives patch updates, and sends back acknowledgments, allowing you to test the system end-to-end.
+
+This setup allows you to test patch distribution, device connectivity, and backend scaling in a controlled, simulated environment.
+
+---
+
 ## Architecture
 
 - **FastAPI** backend (Python)
@@ -100,6 +123,7 @@ kubectl scale deployment camera-backend --replicas=3
 ```
 
 ---
+
 
 ## Notes
 
