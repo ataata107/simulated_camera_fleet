@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: camera-backend
+  template:
+    metadata:
+      labels:
+        app: camera-backend
+    spec:
+      containers:
+      - name: backend
+        image: simulated-camera-backend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: patches-volume
+          mountPath: /app/patches
+      volumes:
+      - name: patches-volume
+        emptyDir: {}
